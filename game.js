@@ -1,12 +1,9 @@
 // TODO: Refactor
 // TODO: Use nicer SVGs
+// TODO: Render starship thrusters
 // TODO: Add game over screen
 // TODO: Add start game screen (with controls)
 // TODO: Add background with stars
-
-document.getElementById("grid").innerHTML = Array(100)
-  .fill(`<div></div>`)
-  .join("");
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -384,31 +381,4 @@ setInterval(() => {
     .flat();
 
   // TODO: Add asteroid when all asteroids have exploded
-
-  // Print debug
-  document.getElementById("debug").innerHTML = `
-    <table>
-      <tbody>
-        <tr><th>Rotation</th><td>${starship.rotation.toFixed(4)}</td></tr>
-        <tr><th>X</th><td>${starship.position.x.toFixed(4)}</td></tr>
-        <tr><th>Y</th><td>${starship.position.y.toFixed(4)}</td></tr>
-        <tr><th>Forward speed</th><td>${starship.forwardSpeed.toFixed(
-          4
-        )}</td></tr>
-        <tr><th>Rotation momentum</th><td>${starship.rotationMomentum.toFixed(
-          4
-        )}</td></tr>
-        <tr><th>Drift speed</th><td>${starship.driftSpeed.toFixed(4)}</td></tr>
-        <tr><th>Drift direction</th><td>${starship.driftDirection.toFixed(
-          4
-        )}</td></tr>
-        <tr><th>Drift X</th><td>${driftVector.x.toFixed(4)}</td></tr>
-        <tr><th>Drift Y</th><td>${driftVector.y.toFixed(4)}</td></tr>
-        <tr><th>Move X</th><td>${moveVector.x.toFixed(4)}</td></tr>
-        <tr><th>Move Y</th><td>${moveVector.y.toFixed(4)}</td></tr>
-        <tr><th>Delta X drift</th><td>${deltaXDrift.toFixed(4)}</td></tr>
-        <tr><th>Delta Y drift</th><td>${deltaYDrift.toFixed(4)}</td></tr>
-      </tbody>
-    </table>
-  `;
 }, 1000 / 60);
