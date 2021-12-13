@@ -5,6 +5,8 @@
 // TODO: Add start game screen (with controls)
 // TODO: Add background with stars
 
+let score = 0;
+
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 ctx.canvas.width = window.innerWidth;
@@ -318,7 +320,6 @@ setInterval(() => {
   // Detect torpedo collisions
   torpedoes.forEach((torpedo, torpedoIndex) => {
     // Torpedo hitting asteroid
-    // TODO: Count score
     asteroids.forEach((asteroid) => {
       let asteroidImage;
       if (asteroid.size === 2) {
@@ -333,6 +334,8 @@ setInterval(() => {
       if (getDistance(torpedo, asteroid) <= asteroidImage.naturalWidth / 2) {
         torpedo.detonated = true;
         asteroid.exploded = true;
+        score++;
+        document.getElementById("score").innerHTML = score;
       }
     });
 
@@ -350,6 +353,7 @@ setInterval(() => {
     });
 
     // TODO: Torpedo hitting spaceship
+    // Only if torpedo is older than some given time
   });
 
   // TODO: Asteroid hitting spaceship
