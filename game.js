@@ -27,6 +27,7 @@ const starship = {
   driftSpeed: 0,
   rotationMomentum: 0,
   forwardSpeed: 0,
+  canFire: true,
 };
 
 let torpedoes = [];
@@ -34,6 +35,7 @@ let torpedoes = [];
 let asteroids = [
   {
     size: 2,
+    // TODO: Get random position half the canvas diagonal away from the ship
     position: {
       x: 0,
       y: 0,
@@ -163,8 +165,11 @@ window.addEventListener("keydown", (event) => {
       starship.forwardSpeed -= movementSpeedChange;
     }, 50);
   }
-  if (event.key === " ") {
-    // TODO: Add cool-down
+  if (event.key === " " && starship.canFire) {
+    starship.canFire = false;
+    setTimeout(() => {
+      starship.canFire = true;
+    }, 500);
     const moveVector = {
       x:
         (Math.cos(getDegToRad(starship.rotation)) || 0) *
@@ -380,5 +385,5 @@ setInterval(() => {
     })
     .flat();
 
-  // TODO: Add asteroid when all asteroids have exploded
+  // TODO: Add asteroid when all asteroids have exploded half the canvas diagonal away from the ship
 }, 1000 / 60);
