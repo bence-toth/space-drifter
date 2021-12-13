@@ -169,7 +169,7 @@ window.addEventListener("keydown", (event) => {
     const deltaYDrift = driftVector.y + moveVector.y;
     let direction;
     if (starship.driftSpeed === 0) {
-      direction = starship.direction;
+      direction = starship.rotation;
     } else {
       direction =
         radToDeg(Math.atan(deltaYDrift / deltaXDrift || 0)) +
