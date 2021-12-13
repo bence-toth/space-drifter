@@ -24,6 +24,18 @@ const starship = {
 
 const torpedoes = [];
 
+const asteroids = [
+  {
+    size: 2,
+    position: {
+      x: 0,
+      y: 0,
+    },
+    direction: -45,
+    rotation: 0,
+  },
+];
+
 const rotationSpeedChange = 0.1;
 const movementSpeedChange = 0.01;
 
@@ -32,6 +44,9 @@ starshipImage.src = "./starship.svg";
 
 const torpedoImage = new Image();
 torpedoImage.src = "./torpedo.svg";
+
+const asteroidBigImage = new Image();
+asteroidBigImage.src = "./asteroid-big.svg";
 
 const draw = () => {
   // Clear the canvas
@@ -59,6 +74,17 @@ const draw = () => {
       torpedo.position.y - torpedoImage.naturalHeight / 2,
       torpedoImage.naturalWidth,
       torpedoImage.naturalHeight
+    );
+  });
+
+  // Draw the asteroids
+  asteroids.forEach((asteroid) => {
+    ctx.drawImage(
+      asteroidBigImage,
+      asteroid.position.x - asteroidBigImage.naturalWidth / 2,
+      asteroid.position.y - asteroidBigImage.naturalHeight / 2,
+      asteroidBigImage.naturalWidth,
+      asteroidBigImage.naturalHeight
     );
   });
 
@@ -125,11 +151,11 @@ window.addEventListener("keydown", (event) => {
     };
     const deltaXDrift = driftVector.x + moveVector.x;
     const deltaYDrift = driftVector.y + moveVector.y;
-    let rotation;
+    let direction;
     if (starship.driftSpeed === 0) {
-      rotation = starship.rotation;
+      direction = starship.direction;
     } else {
-      rotation =
+      direction =
         radToDeg(Math.atan(deltaYDrift / deltaXDrift || 0)) +
         (deltaXDrift < 0 ? 180 : 0);
     }
@@ -139,7 +165,7 @@ window.addEventListener("keydown", (event) => {
         x: starship.position.x,
         y: starship.position.y,
       },
-      rotation,
+      direction,
       speed,
     });
   }
@@ -203,7 +229,7 @@ setInterval(() => {
   // Move torpedoes
   torpedoes.forEach((torpedo) => {
     torpedo.position.x +=
-      torpedo.speed * Math.cos(degToRad(torpedo.rotation)) || 0;
+      torpedo.speed * Math.cos(degToRad(torpedo.direction)) || 0;
     if (torpedo.position.x < 0) {
       torpedo.position.x += ctx.canvas.width;
     }
@@ -211,12 +237,33 @@ setInterval(() => {
       torpedo.position.x -= ctx.canvas.width;
     }
     torpedo.position.y -=
-      torpedo.speed * Math.sin(degToRad(torpedo.rotation)) || 0;
+      torpedo.speed * Math.sin(degToRad(torpedo.direction)) || 0;
     if (torpedo.position.y < 0) {
       torpedo.position.y += ctx.canvas.height;
     }
     if (torpedo.position.y > ctx.canvas.height) {
       torpedo.position.y -= ctx.canvas.height;
+    }
+  });
+
+  // Move asteroids
+  asteroids.forEach((asteroid) => {
+    const asteroidSpeed = 3 - asteroid.size;
+    asteroid.position.x +=
+      asteroidSpeed * Math.cos(degToRad(asteroid.direction)) || 0;
+    if (asteroid.position.x < 0) {
+      asteroid.position.x += ctx.canvas.width;
+    }
+    if (asteroid.position.x > ctx.canvas.width) {
+      asteroid.position.x -= ctx.canvas.width;
+    }
+    asteroid.position.y -=
+      asteroidSpeed * Math.sin(degToRad(asteroid.direction)) || 0;
+    if (asteroid.position.y < 0) {
+      asteroid.position.y += ctx.canvas.height;
+    }
+    if (asteroid.position.y > ctx.canvas.height) {
+      asteroid.position.y -= ctx.canvas.height;
     }
   });
 
