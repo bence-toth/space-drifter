@@ -305,7 +305,7 @@ setInterval(() => {
   });
 
   // Detect torpedo collisions
-  torpedoes.forEach((torpedo) => {
+  torpedoes.forEach((torpedo, torpedoIndex) => {
     // Torpedo hitting asteroid
     asteroids.forEach((asteroid) => {
       let asteroidImage;
@@ -325,7 +325,16 @@ setInterval(() => {
     });
 
     // Torpedo hitting another torpedo
-    // Torpedo hitting spaceship
+    torpedoes.forEach((otherTorpedo, otherTorpedoIndex) => {
+      if (torpedoIndex !== otherTorpedoIndex) {
+        if (
+          getDistance(torpedo, otherTorpedo) <=
+          torpedoImage.naturalWidth / 2
+        ) {
+          torpedo.detonated = true;
+          otherTorpedo.exploded = true;
+        }
+      }
   });
 
   // Get rid of detonated torpedoes
