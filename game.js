@@ -1,3 +1,9 @@
+// TODO: Refactor
+// TODO: Use nicer SVGs
+// TODO: Add game over screen
+// TODO: Add start game screen (with controls)
+// TODO: Add background with stars
+
 document.getElementById("grid").innerHTML = Array(100)
   .fill(`<div></div>`)
   .join("");
@@ -60,6 +66,8 @@ const asteroidSmallImage = new Image();
 asteroidSmallImage.src = "./asteroid-small.svg";
 
 const draw = () => {
+  // TODO: Render spillover parts of object when crossing canvas edges
+
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -159,6 +167,7 @@ window.addEventListener("keydown", (event) => {
     }, 50);
   }
   if (event.key === " ") {
+    // TODO: Add cool-down
     const moveVector = {
       x:
         (Math.cos(getDegToRad(starship.rotation)) || 0) *
@@ -307,6 +316,7 @@ setInterval(() => {
   // Detect torpedo collisions
   torpedoes.forEach((torpedo, torpedoIndex) => {
     // Torpedo hitting asteroid
+    // TODO: Count score
     asteroids.forEach((asteroid) => {
       let asteroidImage;
       if (asteroid.size === 2) {
@@ -335,7 +345,12 @@ setInterval(() => {
           otherTorpedo.exploded = true;
         }
       }
+    });
+
+    // TODO: Torpedo hitting spaceship
   });
+
+  // TODO: Asteroid hitting spaceship
 
   // Get rid of detonated torpedoes
   torpedoes = torpedoes.filter((torpedo) => !torpedo.detonated);
@@ -367,6 +382,8 @@ setInterval(() => {
       ];
     })
     .flat();
+
+  // TODO: Add asteroid when all asteroids have exploded
 
   // Print debug
   document.getElementById("debug").innerHTML = `
