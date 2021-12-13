@@ -48,6 +48,12 @@ torpedoImage.src = "./torpedo.svg";
 const asteroidBigImage = new Image();
 asteroidBigImage.src = "./asteroid-big.svg";
 
+const asteroidMediumImage = new Image();
+asteroidMediumImage.src = "./asteroid-medium.svg";
+
+const asteroidSmallImage = new Image();
+asteroidSmallImage.src = "./asteroid-small.svg";
+
 const draw = () => {
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -79,12 +85,22 @@ const draw = () => {
 
   // Draw the asteroids
   asteroids.forEach((asteroid) => {
+    let asteroidImage;
+    if (asteroid.size === 2) {
+      asteroidImage = asteroidBigImage;
+    }
+    if (asteroid.size === 1) {
+      asteroidImage = asteroidMediumImage;
+    }
+    if (asteroid.size === 0) {
+      asteroidImage = asteroidSmallImage;
+    }
     ctx.drawImage(
-      asteroidBigImage,
-      asteroid.position.x - asteroidBigImage.naturalWidth / 2,
-      asteroid.position.y - asteroidBigImage.naturalHeight / 2,
-      asteroidBigImage.naturalWidth,
-      asteroidBigImage.naturalHeight
+      asteroidImage,
+      asteroid.position.x - asteroidImage.naturalWidth / 2,
+      asteroid.position.y - asteroidImage.naturalHeight / 2,
+      asteroidImage.naturalWidth,
+      asteroidImage.naturalHeight
     );
   });
 
