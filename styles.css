@@ -34,6 +34,7 @@ body {
   display: flex;
   background-image: url(./stars.png);
   background-position: center center;
+  background-size: 50vmin;
 }
 
 canvas {
@@ -46,8 +47,8 @@ canvas {
   top: 0;
   right: 0;
   color: white;
-  padding: 1vmax;
-  font-size: 2vmax;
+  padding: 1.5vmin;
+  font-size: 3vmin;
   line-height: 1;
 }
 
@@ -63,6 +64,7 @@ canvas {
   justify-content: center;
   background-image: url(./stars.png);
   background-position: center center;
+  background-size: 50vmin;
   z-index: 1;
   transition: opacity 0.5s;
 }
@@ -79,13 +81,13 @@ canvas {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2vmax;
+  gap: 3vmin;
 }
 
 #splash h1,
 #gameOver h2,
 #paused h2 {
-  font-size: 6vmax;
+  font-size: 10vmin;
 }
 
 #paused h2 {
@@ -108,18 +110,18 @@ canvas {
 }
 
 #gameOver h3 {
-  font-size: 2vmax;
+  font-size: 3vmin;
 }
 
 #paused p {
-  font-size: 2vmax;
+  font-size: 3vmin;
 }
 
 button {
-  padding: 1vmax;
+  padding: 1.5vmin;
   background-color: transparent;
   color: inherit;
-  font-size: 1.5vmax;
+  font-size: 1.5vmin;
   outline: 0;
   border: 2px solid hsl(0, 0%, 25%);
   cursor: pointer;
@@ -194,6 +196,67 @@ button:is(:hover, :focus, :active) span {
 button:is(:hover, :focus, :active) span,
 button:is(:hover, :focus, :active) .line {
   transition-delay: 0.25s;
+}
+
+.controls {
+  margin-top: 5vmin;
+  border: 1px solid hsl(0, 0%, 50%);
+  background-color: hsl(0, 0%, 7.5%);
+  padding: 2vmin 4vmin 3vmin;
+}
+
+.controls h3 {
+  margin-bottom: 3vmin;
+  text-align: center;
+  font-size: 3vmin;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  font-size: 2vmin;
+  gap: 3vmin 1.5vmin;
+}
+
+dt,
+dd {
+  display: flex;
+  align-items: center;
+  gap: 1.5vmin;
+}
+
+dt {
+  justify-content: flex-start;
+}
+
+dd {
+  justify-content: center;
+}
+
+.wasd {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.5vmin;
+  grid-template-areas:
+    ". w ."
+    "a s d";
+}
+
+.wasd kbd:nth-child(1) {
+  grid-area: w;
+}
+
+.wasd kbd:nth-child(2) {
+  grid-area: a;
+}
+
+.wasd kbd:nth-child(3) {
+  grid-area: s;
+}
+
+.wasd kbd:nth-child(4) {
+  grid-area: d;
 }
 
 kbd {
