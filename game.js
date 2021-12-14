@@ -13,7 +13,7 @@ const updateFrequency = 1000 / 60;
 const dangerousTorpedoTimeout = 1000;
 const explosionDuration = 1000;
 const explosionMaxRadius = 100;
-const explosionMaxWidth = 50;
+const explosionMaxWidth = 20;
 
 let score = 0;
 
