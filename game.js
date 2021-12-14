@@ -1,10 +1,8 @@
-// TODO: Refactor
 // TODO: Add start game screen (with controls)
 // TODO: Add game over screen
-// TODO: Render starship thrusters
-// TODO: Add background with stars
-// TODO: Render explosions
 // TODO: Add pause game
+// TODO: Render starship thrusters
+// TODO: Refactor
 
 // Parameters
 const rotationSpeedChange = 0.1;
@@ -13,6 +11,9 @@ const torpedoLaunchSpeed = 3;
 const asteroidSpeedCoefficient = 1.5;
 const updateFrequency = 1000 / 60;
 const dangerousTorpedoTimeout = 1000;
+const explosionDuration = 1000;
+const explosionMaxRadius = 100;
+const explosionMaxWidth = 50;
 
 let score = 0;
 
@@ -82,6 +83,8 @@ let asteroids = [
     exploded: false,
   },
 ];
+
+let explosions = [];
 
 const starshipImage = new Image();
 starshipImage.src = "./starship.svg";
@@ -472,6 +475,28 @@ const draw = () => {
     }
   });
 
+  // Draw the explosions
+  const now = Date.now();
+  explosions.forEach((explosion) => {
+    const explosionProgress = (now - explosion.startedAt) / explosionDuration;
+    const explosionRadius =
+      torpedoImage.naturalWidth + explosionProgress * explosionMaxRadius;
+    ctx.beginPath();
+    ctx.arc(
+      explosion.position.x,
+      explosion.position.y,
+      explosionRadius,
+      0,
+      2 * Math.PI
+    );
+    ctx.strokeStyle = `hsla(0, 0%, 100%, ${Math.max(
+      0.75 * 1 - explosionProgress,
+      0
+    )})`;
+    ctx.lineWidth = 1 + explosionProgress * explosionMaxWidth;
+    ctx.stroke();
+  });
+
   // Request next frame
   if (isGameRunning) {
     requestAnimationFrame(draw);
@@ -698,6 +723,13 @@ const tick = () => {
       if (getDistance(torpedo, asteroid) <= asteroidImage.naturalWidth / 2) {
         torpedo.detonated = true;
         asteroid.exploded = true;
+        explosions.push({
+          position: {
+            x: torpedo.position.x,
+            y: torpedo.position.y,
+          },
+          startedAt: now,
+        });
         score++;
         document.getElementById("score").innerHTML = score;
       }
@@ -712,6 +744,20 @@ const tick = () => {
         ) {
           torpedo.detonated = true;
           otherTorpedo.detonated = true;
+          explosions.push({
+            position: {
+              x: torpedo.position.x,
+              y: torpedo.position.y,
+            },
+            startedAt: now,
+          });
+          explosions.push({
+            position: {
+              x: otherTorpedo.position.x,
+              y: otherTorpedo.position.y,
+            },
+            startedAt: now,
+          });
         }
       }
     });
@@ -751,6 +797,11 @@ const tick = () => {
 
   // Get rid of detonated torpedoes
   torpedoes = torpedoes.filter((torpedo) => !torpedo.detonated);
+
+  // Get rid of invisible explosions
+  explosions = explosions.filter(
+    (explosion) => now - explosion.startedAt <= explosionDuration
+  );
 
   // Split exploded asteroids
   asteroids = asteroids
