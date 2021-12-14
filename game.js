@@ -11,8 +11,11 @@ const movementSpeedChange = 0.01;
 const torpedoLaunchSpeed = 3;
 const asteroidSpeedCoefficient = 1.5;
 const updateFrequency = 1000 / 60;
+const dangerousTorpedoTimeout = 1000;
 
 let score = 0;
+
+let isGameRunning = true;
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -152,7 +155,9 @@ const draw = () => {
   });
 
   // Request next frame
-  requestAnimationFrame(draw);
+  if (isGameRunning) {
+    requestAnimationFrame(draw);
+  }
 };
 
 requestAnimationFrame(draw);
@@ -195,6 +200,7 @@ window.addEventListener("keydown", (event) => {
       starship.forwardSpeed -= movementSpeedChange;
     }, 50);
   }
+  // TODO: Add mouse click support
   if (event.key === " " && starship.canFire) {
     starship.canFire = false;
     setTimeout(() => {
@@ -235,11 +241,13 @@ window.addEventListener("keydown", (event) => {
       direction,
       speed,
       detonated: false,
+      launchedAt: Date.now(),
     });
   }
 });
 
 window.addEventListener("keyup", (event) => {
+  // TODO: Add WASD support
   if (event.key === "ArrowLeft") {
     clearInterval(rotationMomentumChangeInterval);
   }
@@ -256,7 +264,7 @@ window.addEventListener("keyup", (event) => {
   }
 });
 
-setInterval(() => {
+const tick = () => {
   // Move starship
   starship.rotation += starship.rotationMomentum;
   const moveVector = {
@@ -345,6 +353,8 @@ setInterval(() => {
     }
   });
 
+  const now = Date.now();
+
   // Detect torpedo collisions
   torpedoes.forEach((torpedo, torpedoIndex) => {
     // Torpedo hitting asteroid
@@ -375,16 +385,43 @@ setInterval(() => {
           torpedoImage.naturalWidth / 2
         ) {
           torpedo.detonated = true;
-          otherTorpedo.exploded = true;
+          otherTorpedo.detonated = true;
         }
       }
     });
 
-    // TODO: Torpedo hitting spaceship
-    // Only if torpedo is older than some given time
+    if (
+      !torpedo.detonated &&
+      now - torpedo.launchedAt > dangerousTorpedoTimeout
+    ) {
+      if (getDistance(torpedo, starship) <= starshipImage.naturalWidth / 2) {
+        clearInterval(clock);
+        isGameRunning = false;
+      }
+    }
   });
 
-  // TODO: Asteroid hitting spaceship
+  asteroids.forEach((asteroid) => {
+    if (!asteroid.exploded) {
+      let asteroidImage;
+      if (asteroid.size === 2) {
+        asteroidImage = asteroidBigImage;
+      }
+      if (asteroid.size === 1) {
+        asteroidImage = asteroidMediumImage;
+      }
+      if (asteroid.size === 0) {
+        asteroidImage = asteroidSmallImage;
+      }
+      if (
+        getDistance(asteroid, starship) <=
+        asteroidImage.naturalWidth / 2 + starshipImage.naturalWidth / 2
+      ) {
+        clearInterval(clock);
+        isGameRunning = false;
+      }
+    }
+  });
 
   // Get rid of detonated torpedoes
   torpedoes = torpedoes.filter((torpedo) => !torpedo.detonated);
@@ -428,4 +465,6 @@ setInterval(() => {
       },
     ];
   }
-}, updateFrequency);
+};
+
+const clock = setInterval(tick, updateFrequency);
