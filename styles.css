@@ -52,7 +52,8 @@ canvas {
 }
 
 #splash,
-#gameOver {
+#gameOver,
+#paused {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -67,7 +68,8 @@ canvas {
 }
 
 #splash.hidden,
-#gameOver.hidden {
+#gameOver.hidden,
+#paused.hidden {
   opacity: 0;
   pointer-events: none;
 }
@@ -81,11 +83,35 @@ canvas {
 }
 
 #splash h1,
-#gameOver h2 {
+#gameOver h2,
+#paused h2 {
   font-size: 6vmax;
 }
 
+#paused h2 {
+  animation: twinkle 2s linear infinite;
+}
+
+@keyframes twinkle {
+  from {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0.3333;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 #gameOver h3 {
+  font-size: 2vmax;
+}
+
+#paused p {
   font-size: 2vmax;
 }
 
@@ -98,11 +124,13 @@ button {
   border: 2px solid hsl(0, 0%, 25%);
   cursor: pointer;
   position: relative;
+  margin-top: 1em;
 }
 
 button span {
   opacity: 0.5;
   transition: opacity 0.5s;
+  text-transform: uppercase;
 }
 
 button .line {
@@ -166,4 +194,19 @@ button:is(:hover, :focus, :active) span {
 button:is(:hover, :focus, :active) span,
 button:is(:hover, :focus, :active) .line {
   transition-delay: 0.25s;
+}
+
+kbd {
+  display: inline-block;
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1;
+  padding: 0.2em 0.4em;
+  font-size: 0.9em;
+  color: hsl(0, 0%, 20%);
+  background-color: hsl(0, 0%, 90%);
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 0.25em;
+  box-shadow: 0 0.05em 0 hsla(0, 0%, 0%, 20%),
+    0 0.1em 0 hsla(0, 0%, 100%, 50%) inset;
 }

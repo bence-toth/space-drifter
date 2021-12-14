@@ -1,5 +1,4 @@
 // TODO: Add controls to start game screen
-// TODO: Add pause game
 // TODO: Render starship thrusters
 // TODO: Refactor
 
@@ -17,6 +16,7 @@ const explosionMaxWidth = 20;
 let score = 0;
 
 let isGameRunning = false;
+let isGamePaused = false;
 let gameOver = false;
 
 const canvas = document.getElementById("game-canvas");
@@ -493,7 +493,7 @@ const draw = () => {
   });
 
   // Request next frame
-  if (isGameRunning) {
+  if (isGameRunning && !isGamePaused) {
     requestAnimationFrame(draw);
   }
 };
@@ -547,6 +547,24 @@ const fireTorpedo = () => {
 
 window.addEventListener("keydown", (event) => {
   if (!isGameRunning) {
+    return;
+  }
+  if (event.key === "p" || event.key === "P") {
+    if (isGamePaused) {
+      document.getElementById("paused").classList.add("hidden");
+      isGamePaused = false;
+      clock = setInterval(tick, updateFrequency);
+      requestAnimationFrame(draw);
+    } else {
+      if (gameOver) {
+        return;
+      }
+      document.getElementById("paused").classList.remove("hidden");
+      isGamePaused = true;
+      clearInterval(clock);
+    }
+  }
+  if (isGamePaused) {
     return;
   }
   if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
@@ -884,7 +902,6 @@ const tick = () => {
 };
 
 const startGame = () => {
-  console.log("startGame");
   // Hide splash screen
   document.getElementById("splash").classList.add("hidden");
   document.getElementById("start").tabIndex = -1;
@@ -924,6 +941,7 @@ const startGame = () => {
   explosions = [];
   // Start clock
   isGameRunning = true;
+  isGamePaused = false;
   gameOver = false;
   clock = setInterval(tick, updateFrequency);
   requestAnimationFrame(draw);
