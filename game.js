@@ -1,10 +1,10 @@
 // TODO: Refactor
 // TODO: Add start game screen (with controls)
 // TODO: Add game over screen
-// TODO: Use nicer SVGs
 // TODO: Render starship thrusters
 // TODO: Add background with stars
 // TODO: Render explosions
+// TODO: Add pause game
 
 // Parameters
 const rotationSpeedChange = 0.1;
