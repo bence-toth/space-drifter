@@ -17,7 +17,7 @@ const explosionMaxWidth = 20;
 
 let score = 0;
 
-let isGameRunning = true;
+let isGameRunning = false;
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -59,32 +59,10 @@ const getRandomAsteroidPosition = (starship) => {
   return { x, y };
 };
 
-const starship = {
-  position: {
-    x: ctx.canvas.width / 2,
-    y: ctx.canvas.height / 2,
-  },
-  rotation: 90,
-  driftDirection: 0,
-  driftSpeed: 0,
-  rotationMomentum: 0,
-  forwardSpeed: 0,
-  canFire: true,
-};
-
-let torpedoes = [];
-
-let asteroids = [
-  {
-    size: 2,
-    position: getRandomAsteroidPosition(starship),
-    direction: getRandomDirection(),
-    rotation: getRandomDirection(),
-    exploded: false,
-  },
-];
-
-let explosions = [];
+let starship;
+let torpedoes;
+let asteroids;
+let explosions;
 
 const starshipImage = new Image();
 starshipImage.src = "./starship.svg";
@@ -503,8 +481,6 @@ const draw = () => {
   }
 };
 
-requestAnimationFrame(draw);
-
 let rotationMomentumChangeInterval = null;
 let forwardSpeedChangeInterval = null;
 
@@ -553,6 +529,9 @@ const fireTorpedo = () => {
 };
 
 window.addEventListener("keydown", (event) => {
+  if (!isGameRunning) {
+    return;
+  }
   if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
     starship.rotationMomentum += rotationSpeedChange;
     clearInterval(rotationMomentumChangeInterval);
@@ -593,12 +572,18 @@ window.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("click", () => {
+  if (!isGameRunning) {
+    return;
+  }
   if (starship.canFire) {
     fireTorpedo();
   }
 });
 
 window.addEventListener("keyup", (event) => {
+  if (!isGameRunning) {
+    return;
+  }
   if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
     clearInterval(rotationMomentumChangeInterval);
   }
@@ -844,4 +829,49 @@ const tick = () => {
   }
 };
 
-const clock = setInterval(tick, updateFrequency);
+let clock = null;
+
+const startGame = () => {
+  // Hide splash screen
+  document.getElementById("splash").classList.add("hidden");
+  document.getElementById("start").tabIndex = -1;
+  document.getElementById("start").blur();
+  // Reset score
+  score = 0;
+  // Reset ship
+  starship = {
+    position: {
+      x: ctx.canvas.width / 2,
+      y: ctx.canvas.height / 2,
+    },
+    rotation: 90,
+    driftDirection: 0,
+    driftSpeed: 0,
+    rotationMomentum: 0,
+    forwardSpeed: 0,
+    canFire: true,
+  };
+  // Reset torpedoes
+  torpedoes = [];
+  // Reset asteroids
+  asteroids = [
+    {
+      size: 2,
+      position: getRandomAsteroidPosition(starship),
+      direction: getRandomDirection(),
+      rotation: getRandomDirection(),
+      exploded: false,
+    },
+  ];
+  explosions = [];
+  // Start clock
+  isGameRunning = true;
+  clock = setInterval(tick, updateFrequency);
+  requestAnimationFrame(draw);
+};
+
+// Set up splash screen
+document.getElementById("start").addEventListener("click", (event) => {
+  event.stopPropagation();
+  startGame();
+});
