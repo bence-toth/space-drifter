@@ -4,6 +4,7 @@
 // TODO: Use nicer SVGs
 // TODO: Render starship thrusters
 // TODO: Add background with stars
+// TODO: Render explosions
 
 // Parameters
 const rotationSpeedChange = 0.1;
@@ -98,8 +99,6 @@ const asteroidSmallImage = new Image();
 asteroidSmallImage.src = "./asteroid-small.svg";
 
 const draw = () => {
-  // TODO: Render spillover parts of object when crossing canvas edges
-
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -116,6 +115,158 @@ const draw = () => {
     starshipImage.naturalHeight
   );
   ctx.restore();
+
+  // Left edge
+  if (starship.position.x <= starshipImage.naturalWidth) {
+    ctx.save();
+    ctx.translate(starship.position.x + ctx.canvas.width, starship.position.y);
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Right edge
+  if (starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth) {
+    ctx.save();
+    ctx.translate(starship.position.x - ctx.canvas.width, starship.position.y);
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Top edge
+  if (starship.position.y <= starshipImage.naturalHeight) {
+    ctx.save();
+    ctx.translate(starship.position.x, starship.position.y + ctx.canvas.height);
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Bottom edge
+  if (starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight) {
+    ctx.save();
+    ctx.translate(starship.position.x, starship.position.y - ctx.canvas.height);
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Top left corner
+  if (
+    starship.position.x <= starshipImage.naturalWidth &&
+    starship.position.y <= starshipImage.naturalHeight
+  ) {
+    ctx.save();
+    ctx.translate(
+      starship.position.x + ctx.canvas.width,
+      starship.position.y + ctx.canvas.height
+    );
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Bottom left corner
+  if (
+    starship.position.x <= starshipImage.naturalWidth &&
+    starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight
+  ) {
+    ctx.save();
+    ctx.translate(
+      starship.position.x + ctx.canvas.width,
+      starship.position.y - ctx.canvas.height
+    );
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Top right corner
+  if (
+    starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth &&
+    starship.position.y <= starshipImage.naturalHeight
+  ) {
+    ctx.save();
+    ctx.translate(
+      starship.position.x - ctx.canvas.width,
+      starship.position.y + ctx.canvas.height
+    );
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
+
+  // Bottom right corner
+  if (
+    starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight &&
+    starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth
+  ) {
+    ctx.save();
+    ctx.translate(
+      starship.position.x - ctx.canvas.width,
+      starship.position.y - ctx.canvas.height
+    );
+    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+    ctx.translate(-starship.position.x, -starship.position.y);
+    ctx.drawImage(
+      starshipImage,
+      starship.position.x - starshipImage.naturalWidth / 2,
+      starship.position.y - starshipImage.naturalHeight / 2,
+      starshipImage.naturalWidth,
+      starshipImage.naturalHeight
+    );
+    ctx.restore();
+  }
 
   // Draw the torpedoes
   torpedoes.forEach((torpedo) => {
@@ -152,6 +303,173 @@ const draw = () => {
       asteroidImage.naturalHeight
     );
     ctx.restore();
+
+    // Left edge
+    if (asteroid.position.x <= asteroidImage.naturalWidth) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x + ctx.canvas.width,
+        asteroid.position.y
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Right edge
+    if (asteroid.position.x >= ctx.canvas.width - asteroidImage.naturalWidth) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x - ctx.canvas.width,
+        asteroid.position.y
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Top edge
+    if (asteroid.position.y <= asteroidImage.naturalHeight) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x,
+        asteroid.position.y + ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Bottom edge
+    if (
+      asteroid.position.y >=
+      ctx.canvas.height - asteroidImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x,
+        asteroid.position.y - ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Top left corner
+    if (
+      asteroid.position.x <= asteroidImage.naturalWidth &&
+      asteroid.position.y <= asteroidImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x + ctx.canvas.width,
+        asteroid.position.y + ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Bottom left corner
+    if (
+      asteroid.position.x <= asteroidImage.naturalWidth &&
+      asteroid.position.y >= ctx.canvas.height - asteroidImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x + ctx.canvas.width,
+        asteroid.position.y - ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Top right corner
+    if (
+      asteroid.position.x >= ctx.canvas.width - asteroidImage.naturalWidth &&
+      asteroid.position.y <= asteroidImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x - ctx.canvas.width,
+        asteroid.position.y + ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Bottom right corner
+    if (
+      asteroid.position.x >= ctx.canvas.width - asteroidImage.naturalWidth &&
+      asteroid.position.y >= ctx.canvas.height - asteroidImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        asteroid.position.x - ctx.canvas.width,
+        asteroid.position.y - ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(asteroid.rotation - 90));
+      ctx.translate(-asteroid.position.x, -asteroid.position.y);
+      ctx.drawImage(
+        asteroidImage,
+        asteroid.position.x - asteroidImage.naturalWidth / 2,
+        asteroid.position.y - asteroidImage.naturalHeight / 2,
+        asteroidImage.naturalWidth,
+        asteroidImage.naturalHeight
+      );
+      ctx.restore();
+    }
   });
 
   // Request next frame
