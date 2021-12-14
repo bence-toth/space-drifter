@@ -1,4 +1,4 @@
-// TODO: Add start game screen (with controls)
+// TODO: Add controls to start game screen
 // TODO: Add game over screen
 // TODO: Add pause game
 // TODO: Render starship thrusters
