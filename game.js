@@ -1,9 +1,16 @@
 // TODO: Refactor
+// TODO: Add start game screen (with controls)
+// TODO: Add game over screen
 // TODO: Use nicer SVGs
 // TODO: Render starship thrusters
-// TODO: Add game over screen
-// TODO: Add start game screen (with controls)
 // TODO: Add background with stars
+
+// Parameters
+const rotationSpeedChange = 0.1;
+const movementSpeedChange = 0.01;
+const torpedoLaunchSpeed = 3;
+const asteroidSpeedCoefficient = 1.5;
+const updateFrequency = 1000 / 60;
 
 let score = 0;
 
@@ -21,9 +28,11 @@ const getDistance = (
   { position: { x: x2, y: y2 } }
 ) => ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5;
 
+const getRandomDirection = () => Math.random() * 360;
+
 const getRandomAsteroidPosition = (starship) => {
   const distanceFromStarship = ctx.canvas.height / 2;
-  const randomDirection = Math.random() * 360;
+  const randomDirection = getRandomDirection();
   let x =
     starship.position.x +
     Math.cos(getDegToRad(randomDirection)) * distanceFromStarship;
@@ -64,14 +73,11 @@ let asteroids = [
   {
     size: 2,
     position: getRandomAsteroidPosition(starship),
-    direction: Math.random() * 360,
-    rotation: Math.random() * 360,
+    direction: getRandomDirection(),
+    rotation: getRandomDirection(),
     exploded: false,
   },
 ];
-
-const rotationSpeedChange = 0.1;
-const movementSpeedChange = 0.01;
 
 const starshipImage = new Image();
 starshipImage.src = "./starship.svg";
@@ -197,10 +203,10 @@ window.addEventListener("keydown", (event) => {
     const moveVector = {
       x:
         (Math.cos(getDegToRad(starship.rotation)) || 0) *
-        (starship.forwardSpeed + 2),
+        (starship.forwardSpeed + torpedoLaunchSpeed),
       y:
         (Math.sin(getDegToRad(starship.rotation)) || 0) *
-        (starship.forwardSpeed + 2),
+        (starship.forwardSpeed + torpedoLaunchSpeed),
     };
     const driftVector = {
       x:
@@ -314,7 +320,7 @@ setInterval(() => {
 
   // Move asteroids
   asteroids.forEach((asteroid) => {
-    const asteroidSpeed = 3 - asteroid.size;
+    const asteroidSpeed = (3 - asteroid.size) * asteroidSpeedCoefficient;
     const deltaPosition = {
       x: asteroidSpeed * Math.cos(getDegToRad(asteroid.direction)) || 0,
       y: asteroidSpeed * Math.sin(getDegToRad(asteroid.direction)) || 0,
@@ -396,15 +402,15 @@ setInterval(() => {
         {
           size: asteroid.size - 1,
           position: { x: asteroid.position.x, y: asteroid.position.y },
-          direction: Math.random() * 360,
-          rotation: Math.random() * 360,
+          direction: getRandomDirection(),
+          rotation: getRandomDirection(),
           exploded: false,
         },
         {
           size: asteroid.size - 1,
           position: { x: asteroid.position.x, y: asteroid.position.y },
-          direction: Math.random() * 360,
-          rotation: Math.random() * 360,
+          direction: getRandomDirection(),
+          rotation: getRandomDirection(),
           exploded: false,
         },
       ];
@@ -416,10 +422,10 @@ setInterval(() => {
       {
         size: 2,
         position: getRandomAsteroidPosition(starship),
-        direction: Math.random() * 360,
-        rotation: Math.random() * 360,
+        direction: getRandomDirection(),
+        rotation: getRandomDirection(),
         exploded: false,
       },
     ];
   }
-}, 1000 / 60);
+}, updateFrequency);
