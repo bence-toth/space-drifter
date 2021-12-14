@@ -13,16 +13,42 @@ ctx.canvas.width = 1920;
 ctx.canvas.height = 1080;
 
 const getDegToRad = (degrees) => degrees * (Math.PI / 180);
+
 const getRadToDeg = (radians) => radians * (180 / Math.PI);
+
 const getDistance = (
   { position: { x: x1, y: y1 } },
   { position: { x: x2, y: y2 } }
 ) => ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5;
 
+const getRandomAsteroidPosition = (starship) => {
+  const distanceFromStarship = ctx.canvas.height / 2;
+  const randomDirection = Math.random() * 360;
+  let x =
+    starship.position.x +
+    Math.cos(getDegToRad(randomDirection)) * distanceFromStarship;
+  let y =
+    starship.position.y +
+    Math.sin(getDegToRad(randomDirection)) * distanceFromStarship;
+  if (x < 0) {
+    x += ctx.canvas.width;
+  }
+  if (x > ctx.canvas.width) {
+    x -= ctx.canvas.width;
+  }
+  if (y < 0) {
+    y += ctx.canvas.height;
+  }
+  if (y > ctx.canvas.height) {
+    y -= ctx.canvas.height;
+  }
+  return { x, y };
+};
+
 const starship = {
   position: {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
+    x: ctx.canvas.width / 2,
+    y: ctx.canvas.height / 2,
   },
   rotation: 90,
   driftDirection: 0,
@@ -37,11 +63,7 @@ let torpedoes = [];
 let asteroids = [
   {
     size: 2,
-    // TODO: Get random position half the canvas diagonal away from the ship
-    position: {
-      x: 0,
-      y: 0,
-    },
+    position: getRandomAsteroidPosition(starship),
     direction: Math.random() * 360,
     rotation: Math.random() * 360,
     exploded: false,
@@ -389,5 +411,15 @@ setInterval(() => {
     })
     .flat();
 
-  // TODO: Add asteroid when all asteroids have exploded half the canvas diagonal away from the ship
+  if (asteroids.length === 0) {
+    asteroids = [
+      {
+        size: 2,
+        position: getRandomAsteroidPosition(starship),
+        direction: Math.random() * 360,
+        rotation: Math.random() * 360,
+        exploded: false,
+      },
+    ];
+  }
 }, 1000 / 60);
