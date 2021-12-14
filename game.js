@@ -61,19 +61,19 @@ let asteroids;
 let explosions;
 
 const starshipImage = new Image();
-starshipImage.src = "./starship.svg";
+starshipImage.src = "./assets/starship.svg";
 
 const torpedoImage = new Image();
-torpedoImage.src = "./torpedo.svg";
+torpedoImage.src = "./assets/torpedo.svg";
 
 const asteroidBigImage = new Image();
-asteroidBigImage.src = "./asteroid-big.svg";
+asteroidBigImage.src = "./assets/asteroid-big.svg";
 
 const asteroidMediumImage = new Image();
-asteroidMediumImage.src = "./asteroid-medium.svg";
+asteroidMediumImage.src = "./assets/asteroid-medium.svg";
 
 const asteroidSmallImage = new Image();
-asteroidSmallImage.src = "./asteroid-small.svg";
+asteroidSmallImage.src = "./assets/asteroid-small.svg";
 
 const draw = () => {
   // Clear the canvas

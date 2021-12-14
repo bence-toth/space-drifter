@@ -32,7 +32,7 @@ body {
   background-color: black;
   position: relative;
   display: flex;
-  background-image: url(./stars.png);
+  background-image: url(./assets/stars.png);
   background-position: center center;
   background-size: 50vmin;
 }
@@ -62,7 +62,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(./stars.png);
+  background-image: url(./assets/stars.png);
   background-position: center center;
   background-size: 50vmin;
   z-index: 1;
