@@ -1,7 +1,3 @@
-// TODO: Add controls to start game screen
-// TODO: Render starship thrusters
-// TODO: Refactor
-
 // Parameters
 const rotationSpeedChange = 0.1;
 const movementSpeedChange = 0.01;
@@ -846,10 +842,12 @@ const tick = () => {
       if (!asteroid.exploded) {
         return asteroid;
       }
+
       // Remove exploded small asteroids
       if (asteroid.size === 0) {
         return [];
       }
+
       // Split exploded asteroids
       return [
         {
@@ -909,9 +907,11 @@ const startGame = () => {
   document.getElementById("gameOver").classList.add("hidden");
   document.getElementById("restart").tabIndex = -1;
   document.getElementById("restart").blur();
+
   // Reset score
   score = 0;
   document.getElementById("score").innerHTML = "0";
+
   // Reset ship
   starship = {
     position: {
@@ -926,8 +926,10 @@ const startGame = () => {
     canFire: true,
     exploded: false,
   };
+
   // Reset torpedoes
   torpedoes = [];
+
   // Reset asteroids
   asteroids = [
     {
@@ -939,6 +941,7 @@ const startGame = () => {
     },
   ];
   explosions = [];
+
   // Start clock
   isGameRunning = true;
   isGamePaused = false;

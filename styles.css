@@ -273,3 +273,25 @@ kbd {
   box-shadow: 0 0.05em 0 hsla(0, 0%, 0%, 20%),
     0 0.1em 0 hsla(0, 0%, 100%, 50%) inset;
 }
+
+#splash footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 2vmin;
+  color: hsl(0, 0%, 60%);
+}
+
+a {
+  color: inherit;
+  outline: 0;
+  transition: color 0.5s;
+}
+
+a:hover,
+a:active,
+a:focus {
+  color: hsl(0, 0%, 100%);
+}
