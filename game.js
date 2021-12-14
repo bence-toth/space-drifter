@@ -165,22 +165,66 @@ requestAnimationFrame(draw);
 let rotationMomentumChangeInterval = null;
 let forwardSpeedChangeInterval = null;
 
+const fireTorpedo = () => {
+  starship.canFire = false;
+  setTimeout(() => {
+    starship.canFire = true;
+  }, 500);
+  const moveVector = {
+    x:
+      (Math.cos(getDegToRad(starship.rotation)) || 0) *
+      (starship.forwardSpeed + torpedoLaunchSpeed),
+    y:
+      (Math.sin(getDegToRad(starship.rotation)) || 0) *
+      (starship.forwardSpeed + torpedoLaunchSpeed),
+  };
+  const driftVector = {
+    x:
+      (Math.cos(getDegToRad(starship.driftDirection)) || 0) *
+      starship.driftSpeed,
+    y:
+      (Math.sin(getDegToRad(starship.driftDirection)) || 0) *
+      starship.driftSpeed,
+  };
+  const deltaXDrift = driftVector.x + moveVector.x;
+  const deltaYDrift = driftVector.y + moveVector.y;
+  let direction;
+  if (starship.driftSpeed === 0) {
+    direction = starship.rotation;
+  } else {
+    direction =
+      getRadToDeg(Math.atan(deltaYDrift / deltaXDrift || 0)) +
+      (deltaXDrift < 0 ? 180 : 0);
+  }
+  const speed = (deltaXDrift ** 2 + deltaYDrift ** 2) ** 0.5;
+  torpedoes.push({
+    position: {
+      x: starship.position.x,
+      y: starship.position.y,
+    },
+    direction,
+    speed,
+    detonated: false,
+    launchedAt: Date.now(),
+  });
+};
+
 window.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowLeft") {
+  if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
     starship.rotationMomentum += rotationSpeedChange;
     clearInterval(rotationMomentumChangeInterval);
     rotationMomentumChangeInterval = setInterval(() => {
       starship.rotationMomentum += rotationSpeedChange;
     }, 50);
   }
-  if (event.key === "ArrowRight") {
+  if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
     starship.rotationMomentum -= rotationSpeedChange;
     clearInterval(rotationMomentumChangeInterval);
     rotationMomentumChangeInterval = setInterval(() => {
       starship.rotationMomentum -= rotationSpeedChange;
     }, 50);
   }
-  if (event.key === "ArrowUp") {
+  if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
     if (starship.forwardSpeed < 0) {
       starship.forwardSpeed = 0;
     }
@@ -190,7 +234,7 @@ window.addEventListener("keydown", (event) => {
       starship.forwardSpeed += movementSpeedChange;
     }, 50);
   }
-  if (event.key === "ArrowDown") {
+  if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
     if (starship.forwardSpeed > 0) {
       starship.forwardSpeed = 0;
     }
@@ -200,65 +244,29 @@ window.addEventListener("keydown", (event) => {
       starship.forwardSpeed -= movementSpeedChange;
     }, 50);
   }
-  // TODO: Add mouse click support
   if (event.key === " " && starship.canFire) {
-    starship.canFire = false;
-    setTimeout(() => {
-      starship.canFire = true;
-    }, 500);
-    const moveVector = {
-      x:
-        (Math.cos(getDegToRad(starship.rotation)) || 0) *
-        (starship.forwardSpeed + torpedoLaunchSpeed),
-      y:
-        (Math.sin(getDegToRad(starship.rotation)) || 0) *
-        (starship.forwardSpeed + torpedoLaunchSpeed),
-    };
-    const driftVector = {
-      x:
-        (Math.cos(getDegToRad(starship.driftDirection)) || 0) *
-        starship.driftSpeed,
-      y:
-        (Math.sin(getDegToRad(starship.driftDirection)) || 0) *
-        starship.driftSpeed,
-    };
-    const deltaXDrift = driftVector.x + moveVector.x;
-    const deltaYDrift = driftVector.y + moveVector.y;
-    let direction;
-    if (starship.driftSpeed === 0) {
-      direction = starship.rotation;
-    } else {
-      direction =
-        getRadToDeg(Math.atan(deltaYDrift / deltaXDrift || 0)) +
-        (deltaXDrift < 0 ? 180 : 0);
-    }
-    const speed = (deltaXDrift ** 2 + deltaYDrift ** 2) ** 0.5;
-    torpedoes.push({
-      position: {
-        x: starship.position.x,
-        y: starship.position.y,
-      },
-      direction,
-      speed,
-      detonated: false,
-      launchedAt: Date.now(),
-    });
+    fireTorpedo();
+  }
+});
+
+document.addEventListener("click", () => {
+  if (starship.canFire) {
+    fireTorpedo();
   }
 });
 
 window.addEventListener("keyup", (event) => {
-  // TODO: Add WASD support
-  if (event.key === "ArrowLeft") {
+  if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
     clearInterval(rotationMomentumChangeInterval);
   }
-  if (event.key === "ArrowRight") {
+  if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
     clearInterval(rotationMomentumChangeInterval);
   }
-  if (event.key === "ArrowUp") {
+  if (event.key === "ArrowUp" || event.key === "w" || event.key === "W") {
     clearInterval(forwardSpeedChangeInterval);
     starship.forwardSpeed = 0;
   }
-  if (event.key === "ArrowDown") {
+  if (event.key === "ArrowDown" || event.key === "s" || event.key === "S") {
     clearInterval(forwardSpeedChangeInterval);
     starship.forwardSpeed = 0;
   }
