@@ -1,5 +1,4 @@
 // TODO: Add controls to start game screen
-// TODO: Add game over screen
 // TODO: Add pause game
 // TODO: Render starship thrusters
 // TODO: Refactor
@@ -18,6 +17,7 @@ const explosionMaxWidth = 20;
 let score = 0;
 
 let isGameRunning = false;
+let gameOver = false;
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -83,24 +83,10 @@ const draw = () => {
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Draw the ship
-  ctx.save();
-  ctx.translate(starship.position.x, starship.position.y);
-  ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-  ctx.translate(-starship.position.x, -starship.position.y);
-  ctx.drawImage(
-    starshipImage,
-    starship.position.x - starshipImage.naturalWidth / 2,
-    starship.position.y - starshipImage.naturalHeight / 2,
-    starshipImage.naturalWidth,
-    starshipImage.naturalHeight
-  );
-  ctx.restore();
-
-  // Left edge
-  if (starship.position.x <= starshipImage.naturalWidth) {
+  // Draw the starship
+  if (!starship.exploded) {
     ctx.save();
-    ctx.translate(starship.position.x + ctx.canvas.width, starship.position.y);
+    ctx.translate(starship.position.x, starship.position.y);
     ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
     ctx.translate(-starship.position.x, -starship.position.y);
     ctx.drawImage(
@@ -111,142 +97,173 @@ const draw = () => {
       starshipImage.naturalHeight
     );
     ctx.restore();
-  }
 
-  // Right edge
-  if (starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth) {
-    ctx.save();
-    ctx.translate(starship.position.x - ctx.canvas.width, starship.position.y);
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
-  }
+    // Left edge
+    if (starship.position.x <= starshipImage.naturalWidth) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x + ctx.canvas.width,
+        starship.position.y
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
 
-  // Top edge
-  if (starship.position.y <= starshipImage.naturalHeight) {
-    ctx.save();
-    ctx.translate(starship.position.x, starship.position.y + ctx.canvas.height);
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
-  }
+    // Right edge
+    if (starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x - ctx.canvas.width,
+        starship.position.y
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
 
-  // Bottom edge
-  if (starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight) {
-    ctx.save();
-    ctx.translate(starship.position.x, starship.position.y - ctx.canvas.height);
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
-  }
+    // Top edge
+    if (starship.position.y <= starshipImage.naturalHeight) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x,
+        starship.position.y + ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
 
-  // Top left corner
-  if (
-    starship.position.x <= starshipImage.naturalWidth &&
-    starship.position.y <= starshipImage.naturalHeight
-  ) {
-    ctx.save();
-    ctx.translate(
-      starship.position.x + ctx.canvas.width,
-      starship.position.y + ctx.canvas.height
-    );
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
-  }
+    // Bottom edge
+    if (
+      starship.position.y >=
+      ctx.canvas.height - starshipImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x,
+        starship.position.y - ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
 
-  // Bottom left corner
-  if (
-    starship.position.x <= starshipImage.naturalWidth &&
-    starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight
-  ) {
-    ctx.save();
-    ctx.translate(
-      starship.position.x + ctx.canvas.width,
-      starship.position.y - ctx.canvas.height
-    );
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
-  }
+    // Top left corner
+    if (
+      starship.position.x <= starshipImage.naturalWidth &&
+      starship.position.y <= starshipImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x + ctx.canvas.width,
+        starship.position.y + ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
 
-  // Top right corner
-  if (
-    starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth &&
-    starship.position.y <= starshipImage.naturalHeight
-  ) {
-    ctx.save();
-    ctx.translate(
-      starship.position.x - ctx.canvas.width,
-      starship.position.y + ctx.canvas.height
-    );
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
-  }
+    // Bottom left corner
+    if (
+      starship.position.x <= starshipImage.naturalWidth &&
+      starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x + ctx.canvas.width,
+        starship.position.y - ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
 
-  // Bottom right corner
-  if (
-    starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight &&
-    starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth
-  ) {
-    ctx.save();
-    ctx.translate(
-      starship.position.x - ctx.canvas.width,
-      starship.position.y - ctx.canvas.height
-    );
-    ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
-    ctx.translate(-starship.position.x, -starship.position.y);
-    ctx.drawImage(
-      starshipImage,
-      starship.position.x - starshipImage.naturalWidth / 2,
-      starship.position.y - starshipImage.naturalHeight / 2,
-      starshipImage.naturalWidth,
-      starshipImage.naturalHeight
-    );
-    ctx.restore();
+    // Top right corner
+    if (
+      starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth &&
+      starship.position.y <= starshipImage.naturalHeight
+    ) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x - ctx.canvas.width,
+        starship.position.y + ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
+
+    // Bottom right corner
+    if (
+      starship.position.y >= ctx.canvas.height - starshipImage.naturalHeight &&
+      starship.position.x >= ctx.canvas.width - starshipImage.naturalWidth
+    ) {
+      ctx.save();
+      ctx.translate(
+        starship.position.x - ctx.canvas.width,
+        starship.position.y - ctx.canvas.height
+      );
+      ctx.rotate(-1 * getDegToRad(starship.rotation - 90));
+      ctx.translate(-starship.position.x, -starship.position.y);
+      ctx.drawImage(
+        starshipImage,
+        starship.position.x - starshipImage.naturalWidth / 2,
+        starship.position.y - starshipImage.naturalHeight / 2,
+        starshipImage.naturalWidth,
+        starshipImage.naturalHeight
+      );
+      ctx.restore();
+    }
   }
 
   // Draw the torpedoes
@@ -715,7 +732,9 @@ const tick = () => {
           },
           startedAt: now,
         });
-        score++;
+        if (!starship.exploded) {
+          score++;
+        }
         document.getElementById("score").innerHTML = score;
       }
     });
@@ -747,19 +766,29 @@ const tick = () => {
       }
     });
 
+    // Torpedo hitting starship
     if (
       !torpedo.detonated &&
+      !starship.exploded &&
       now - torpedo.launchedAt > dangerousTorpedoTimeout
     ) {
       if (getDistance(torpedo, starship) <= starshipImage.naturalWidth / 2) {
-        clearInterval(clock);
-        isGameRunning = false;
+        starship.exploded = true;
+        torpedo.detonated = true;
+        explosions.push({
+          position: {
+            x: starship.position.x,
+            y: starship.position.y,
+          },
+          startedAt: now,
+        });
       }
     }
   });
 
   asteroids.forEach((asteroid) => {
-    if (!asteroid.exploded) {
+    if (!asteroid.exploded && !starship.exploded) {
+      // Asteroid hitting starship
       let asteroidImage;
       if (asteroid.size === 2) {
         asteroidImage = asteroidBigImage;
@@ -774,8 +803,14 @@ const tick = () => {
         getDistance(asteroid, starship) <=
         asteroidImage.naturalWidth / 2 + starshipImage.naturalWidth / 2
       ) {
-        clearInterval(clock);
-        isGameRunning = false;
+        starship.exploded = true;
+        explosions.push({
+          position: {
+            x: starship.position.x,
+            y: starship.position.y,
+          },
+          startedAt: now,
+        });
       }
     }
   });
@@ -788,15 +823,16 @@ const tick = () => {
     (explosion) => now - explosion.startedAt <= explosionDuration
   );
 
-  // Split exploded asteroids
   asteroids = asteroids
     .map((asteroid) => {
       if (!asteroid.exploded) {
         return asteroid;
       }
+      // Remove exploded small asteroids
       if (asteroid.size === 0) {
         return [];
       }
+      // Split exploded asteroids
       return [
         {
           size: asteroid.size - 1,
@@ -816,6 +852,7 @@ const tick = () => {
     })
     .flat();
 
+  // Create new asteroid if the last one has exploded
   if (asteroids.length === 0) {
     asteroids = [
       {
@@ -827,17 +864,37 @@ const tick = () => {
       },
     ];
   }
+
+  // Game over when starship has exploded
+  if (starship.exploded && !gameOver) {
+    gameOver = true;
+    clearInterval(rotationMomentumChangeInterval);
+    clearInterval(rotationMomentumChangeInterval);
+    clearInterval(forwardSpeedChangeInterval);
+    clearInterval(forwardSpeedChangeInterval);
+    setTimeout(() => {
+      isGameRunning = false;
+      clearInterval(clock);
+      document.getElementById("gameOver").classList.remove("hidden");
+      document.getElementById("finalScore").innerHTML = score;
+      document.getElementById("restart").tabIndex = 0;
+      document.getElementById("restart").focus();
+    }, explosionDuration * 2);
+  }
 };
 
-let clock = null;
-
 const startGame = () => {
+  console.log("startGame");
   // Hide splash screen
   document.getElementById("splash").classList.add("hidden");
   document.getElementById("start").tabIndex = -1;
   document.getElementById("start").blur();
+  document.getElementById("gameOver").classList.add("hidden");
+  document.getElementById("restart").tabIndex = -1;
+  document.getElementById("restart").blur();
   // Reset score
   score = 0;
+  document.getElementById("score").innerHTML = "0";
   // Reset ship
   starship = {
     position: {
@@ -850,6 +907,7 @@ const startGame = () => {
     rotationMomentum: 0,
     forwardSpeed: 0,
     canFire: true,
+    exploded: false,
   };
   // Reset torpedoes
   torpedoes = [];
@@ -866,12 +924,20 @@ const startGame = () => {
   explosions = [];
   // Start clock
   isGameRunning = true;
+  gameOver = false;
   clock = setInterval(tick, updateFrequency);
   requestAnimationFrame(draw);
 };
 
 // Set up splash screen
+document.getElementById("start").focus();
 document.getElementById("start").addEventListener("click", (event) => {
+  event.stopPropagation();
+  startGame();
+});
+
+// Set up game over screen
+document.getElementById("restart").addEventListener("click", (event) => {
   event.stopPropagation();
   startGame();
 });

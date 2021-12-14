@@ -5,6 +5,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Audiowide", serif;
+  line-height: 1;
 }
 
 html,
@@ -40,7 +41,18 @@ canvas {
   height: 100%;
 }
 
-#splash {
+#score {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  padding: 1vmax;
+  font-size: 2vmax;
+  line-height: 1;
+}
+
+#splash,
+#gameOver {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -54,7 +66,8 @@ canvas {
   transition: opacity 0.5s;
 }
 
-#splash.hidden {
+#splash.hidden,
+#gameOver.hidden {
   opacity: 0;
   pointer-events: none;
 }
@@ -67,8 +80,13 @@ canvas {
   gap: 2vmax;
 }
 
-#splash h1 {
+#splash h1,
+#gameOver h2 {
   font-size: 6vmax;
+}
+
+#gameOver h3 {
+  font-size: 2vmax;
 }
 
 button {
@@ -90,7 +108,7 @@ button span {
 button .line {
   position: absolute;
   background-color: white;
-  transition: transform 0.5s;
+  transition: transform 1s;
 }
 
 button .top,
@@ -145,12 +163,7 @@ button:is(:hover, :focus, :active) span {
   opacity: 1;
 }
 
-#score {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: white;
-  padding: 1vmax;
-  font-size: 2vmax;
-  line-height: 1;
+button:is(:hover, :focus, :active) span,
+button:is(:hover, :focus, :active) .line {
+  transition-delay: 0.25s;
 }
