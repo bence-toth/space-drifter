@@ -9,8 +9,8 @@ let score = 0;
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
-ctx.canvas.width = window.innerWidth;
-ctx.canvas.height = window.innerHeight;
+ctx.canvas.width = 1920;
+ctx.canvas.height = 1080;
 
 const getDegToRad = (degrees) => degrees * (Math.PI / 180);
 const getRadToDeg = (radians) => radians * (180 / Math.PI);
